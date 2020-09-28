@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JMenuBar;
 import java.awt.CardLayout;
 import javax.swing.JLayeredPane;
@@ -12,10 +14,16 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.Color;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -36,7 +44,10 @@ public class USAP extends JFrame {
 	private JLayeredPane sessions;
 	private JPanel pre;
 	private JPanel actual;
-
+	
+	List<String> connectedUsers = new ArrayList<String>();
+	String sb = "TEST CONTENT";
+	
 	/**
 	 * Launch the application.
 	 */
@@ -204,7 +215,7 @@ public class USAP extends JFrame {
 		input_message.setBounds(33, 431, 390, 89);
 		actual.add(input_message);
 		
-		JButton btn_upload = new JButton("Upload Image");
+		JButton btn_upload = new JButton("Upload File");
 		btn_upload.setBounds(445, 431, 113, 37);
 		actual.add(btn_upload);
 		
@@ -224,7 +235,10 @@ public class USAP extends JFrame {
 				if(!input_name.getText().equals("") && !input_port.getText().equals("")){
 					text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
 					text_port.setText(input_port.getText());
-					text_users.setText(text_users.getText() + input_name.getText() + "\r\n"); 
+					connectedUsers.add(input_name.getText());
+					text_users.setText("Connected Users:\r\n\r\n");// + connectedUsers + "\r\n"); 
+					for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
+					text_messages.setText(text_messages.getText() + "\r\n\r\n[BOT] " + input_name.getText() + " has joined the conversation.");
 					switchPanels(actual);	
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>All fields are required! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -235,7 +249,44 @@ public class USAP extends JFrame {
 		btn_logOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(pre);
+				connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+				text_messages.setText(text_messages.getText() + "\r\n\r\n[BOT] " + input_name.getText() + " has left the conversation.");
 				JOptionPane.showMessageDialog(null, "<html><center>You have succesfully logged out.</html>");
+			}
+		});
+		
+		btn_log.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser saveFile = new JFileChooser();
+				FileFilter  texts = new FileNameExtensionFilter("Text file", "txt");
+				saveFile.addChoosableFileFilter(texts);
+				saveFile.setAcceptAllFileFilterUsed(false);
+				saveFile.setSelectedFile(new File(".txt"));
+				int returnVal = saveFile.showSaveDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					try(FileWriter fwLog = new FileWriter(saveFile.getSelectedFile())) {
+						fwLog.write(sb.toString());
+						fwLog.close();
+						JOptionPane.showMessageDialog(null, "<html><center>Log file succesfully downloaded.</html>");
+					} catch (Exception ex) {
+			            ex.printStackTrace();
+			            JOptionPane.showMessageDialog(null, "<html><center>Error in downloading log file! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
+			        }
+			    }
+			}
+		});
+		
+		btn_upload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser openFile = new JFileChooser();
+				FileFilter  images = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
+				FileFilter  texts = new FileNameExtensionFilter("Text file", "txt");
+				openFile.addChoosableFileFilter(images);
+				openFile.addChoosableFileFilter(texts);
+				openFile.setMultiSelectionEnabled(true);
+				openFile.setAcceptAllFileFilterUsed(false);
+				openFile.showOpenDialog(null);
+				File[] files = openFile.getSelectedFiles();
 			}
 		});
 		
