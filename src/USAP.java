@@ -64,7 +64,7 @@ public class USAP extends JFrame {
 	 * Create the frame.
 	 */
 	public USAP() {
-		setTitle("De La Salle Usap (S13 Cruz &Santos)");
+		setTitle("De La Salle Usap (S13 Cruz & Santos)");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 600);
 		setResizable(false);
@@ -82,11 +82,6 @@ public class USAP extends JFrame {
 		mnBar.add(mn_help);
 		
 		JMenuItem mnitem_about = new JMenuItem("About");
-		mnitem_about.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "<html><center>Software Developer: Joeme Santos<br>GUI Developer: Jolson Cruz<br><br>In partial completion of CSNETWK<br>Submitted to: Mr. Marnel Peradilla.</html>");
-			}
-		});
 		mn_help.add(mnitem_about);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -143,14 +138,9 @@ public class USAP extends JFrame {
 		Image port = new ImageIcon(this.getClass().getResource("/port.png")).getImage();
 		img_port.setIcon(new ImageIcon(port));
 		
-		JButton btnLogIn = new JButton("Log In");
-		btnLogIn.setBounds(149, 460, 290, 48);
-		pre.add(btnLogIn);
-		btnLogIn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switchPanels(actual);
-			}
-		});
+		JButton btn_logIn = new JButton("Log In");
+		btn_logIn.setBounds(149, 460, 290, 48);
+		pre.add(btn_logIn);
 		
 		actual = new JPanel();
 		actual.setLayout(null);
@@ -172,10 +162,10 @@ public class USAP extends JFrame {
 		div_address.setBounds(281, 103, 142, 21);
 		actual.add(div_address);
 		
-		JLabel text_address = new JLabel("192.168.1.1");
-		text_address.setForeground(Color.WHITE);
-		text_address.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 11));
-		div_address.add(text_address);
+		JLabel text_port = new JLabel(input_port.getText());
+		text_port.setForeground(Color.WHITE);
+		text_port.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 11));
+		div_address.add(text_port);
 		
 		JButton btn_logOut = new JButton("Log Out");
 		btn_logOut.setBounds(445, 103, 113, 21);
@@ -189,7 +179,7 @@ public class USAP extends JFrame {
 		text_messages.setEditable(false);
 		text_messages.setLineWrap(true);
 		text_messages.setWrapStyleWord(true);
-		text_messages.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a arcu vitae nisl facilisis tempor nec sed ipsum. Curabitur suscipit eros sed molestie mollis. Mauris finibus odio nulla, id tempor nisi accumsan ut. Maecenas in elit venenatis, euismod tortor eu, lobortis arcu. Nunc ac laoreet nulla, ac vehicula leo. Quisque a purus volutpat lacus faucibus auctor at vel eros. Morbi accumsan sapien bibendum magna ullamcorper ultricies. Morbi feugiat pretium massa, eget vestibulum magna maximus quis. Sed feugiat lobortis neque in pellentesque. Sed lobortis nisi vel iaculis dignissim.\r\n\r\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a arcu vitae nisl facilisis tempor nec sed ipsum. Curabitur suscipit eros sed molestie mollis. Mauris finibus odio nulla, id tempor nisi accumsan ut. Maecenas in elit venenatis, euismod tortor eu, lobortis arcu. Nunc ac laoreet nulla, ac vehicula leo. Quisque a purus volutpat lacus faucibus auctor at vel eros. Morbi accumsan sapien bibendum magna ullamcorper ultricies. Morbi feugiat pretium massa, eget vestibulum magna maximus quis. Sed feugiat lobortis neque in pellentesque. Sed lobortis nisi vel iaculis dignissim.");
+		text_messages.setText("[BOT] Welcome, Lasallians! This is the beginning of your conversation at port: ! Please observe proper decorum at all times when communicating via DLSU USAP.");
 		div_messages.setViewportView(text_messages);
 		
 		JScrollPane div_users = new JScrollPane();
@@ -199,7 +189,7 @@ public class USAP extends JFrame {
 		JTextArea text_users = new JTextArea();
 		text_users.setLineWrap(true);
 		text_users.setWrapStyleWord(true);
-		text_users.setText("Connected Users:\r\n\r\nJolson Cruz\r\nJoeme Santos");
+		text_users.setText("Connected Users:\r\n\r\n");
 		div_users.setViewportView(text_users);
 		
 		JButton btn_log = new JButton("Download Log");
@@ -221,5 +211,44 @@ public class USAP extends JFrame {
 		JButton btn_send = new JButton("Send Message");
 		btn_send.setBounds(445, 483, 113, 37);
 		actual.add(btn_send);
+		
+		//ACTION LISTENERS
+		mnitem_about.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "<html><center>Software Developer: Joeme Santos<br>GUI Developer: Jolson Cruz<br><br>In partial completion of CSNETWK<br>Submitted to: Mr. Marnel Peradilla.</html>");
+			}
+		});
+		
+		btn_logIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!input_name.getText().equals("") && !input_port.getText().equals("")){
+					text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
+					text_port.setText(input_port.getText());
+					text_users.setText(text_users.getText() + input_name.getText() + "\r\n"); 
+					switchPanels(actual);	
+				} else {
+					JOptionPane.showMessageDialog(null, "<html><center>All fields are required! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		btn_logOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(pre);
+				JOptionPane.showMessageDialog(null, "<html><center>You have succesfully logged out.</html>");
+			}
+		});
+		
+		btn_send.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!input_message.getText().equals("")){
+					text_messages.setText(text_messages.getText() + "\r\n\r\n[" + input_name.getText() + "] " + input_message.getText() + " ");
+					input_message.setText("");
+				} else {
+					JOptionPane.showMessageDialog(null, "<html><center>Message field is empty! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+	
 	}
 }
