@@ -5,8 +5,12 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +36,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 public class ServerGUI extends JFrame {
-	private JPanel contentPane;
-	private JLayeredPane sessions;
-	private JPanel pre;
-	private JTextField input_port;
-	private JPanel actual;
-	private JLabel img_logo;
-
-	List<String> connectedUsers = new ArrayList<String>();
-	List<String> logSheet = new ArrayList<String>();
-	String message = new String();
+	
+	static ServerSocket ss;
+	static Socket s;
+	static DataInputStream dis;
+	static DataOutputStream dos;
+	
 	private JPanel post;
 	
 	/**
@@ -58,6 +58,22 @@ public class ServerGUI extends JFrame {
 				}
 			}
 		});
+		
+		try {
+			String msgin = "";
+			ss = new ServerSocket(1201);
+			s = ss.accept();
+			dis = new DataInputStream(s.getInputStream());
+			dos = new DataOutputStream(s.getOutputStream());
+			
+			while(!msgin.equals("exit")){
+				msgin = dis.readUTF();
+				text_log.setText(text_log.getText() + "\n\n" + msgin);
+				logSheet.add(timeNow() + " " + msgin);
+			}
+		} catch(Exception e1) {
+			
+		}
 	}
 	
 	public void switchPanels(JPanel panel) {
@@ -67,7 +83,7 @@ public class ServerGUI extends JFrame {
 		sessions.revalidate();
 	}
 	
-	public Timestamp timeNow() {
+	public static Timestamp timeNow() {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		return timestamp;
 	}
@@ -171,7 +187,7 @@ public class ServerGUI extends JFrame {
 		div_messages.setBounds(33, 135, 390, 380);
 		actual.add(div_messages);
 		
-		JTextArea text_log = new JTextArea();
+		text_log = new JTextArea();
 		text_log.setEditable(false);
 		text_log.setLineWrap(true);
 		text_log.setWrapStyleWord(true);
@@ -340,4 +356,16 @@ public class ServerGUI extends JFrame {
 			}
 		});
 	}
+	
+	static List<String> connectedUsers = new ArrayList<String>();
+	static List<String> logSheet = new ArrayList<String>();
+	String message = new String();
+	
+	private static JTextArea text_log;
+	private JPanel contentPane;
+	private JLayeredPane sessions;
+	private JPanel pre;
+	private JTextField input_port;
+	private JPanel actual;
+	private JLabel img_logo;
 }

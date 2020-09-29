@@ -15,8 +15,12 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
@@ -40,13 +44,9 @@ import javax.swing.JTextField;
 import java.sql.Timestamp;
 
 public class ClientGUI extends JFrame {
-
-	private JPanel contentPane;
-	private JTextField input_name;
-	private JTextField input_ip;
-	private JLayeredPane sessions;
-	private JPanel pre;
-	private JPanel actual;
+	static Socket s;
+	static DataInputStream dis;
+	static DataOutputStream dos;
 	
 	List<String> connectedUsers = new ArrayList<String>();
 	List<String> transcript = new ArrayList<String>();
@@ -66,6 +66,21 @@ public class ClientGUI extends JFrame {
 				}
 			}
 		});
+		
+		try {
+			String msgin = "";
+			
+			s = new Socket("127.0.0.1", 1201);
+			dis = new DataInputStream(s.getInputStream());
+			dos = new DataOutputStream(s.getOutputStream());
+			
+			while(!msgin.equals("exit")){
+				msgin = dis.readUTF();
+				text_messages.setText(text_messages.getText() + "\n\n" + msgin);
+			}
+		} catch(Exception e1) {
+			
+		}
 	}
 	
 	public void switchPanels(JPanel panel) {
@@ -244,10 +259,17 @@ public class ClientGUI extends JFrame {
 		mnitem_quit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!input_name.getText().equals("") && connectedUsers.indexOf(input_name.getText()) != -1){
-            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
-    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
-    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-    				transcript.add(timeNow() + " " + message);
+					try {
+	            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+	    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
+	    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+	    				transcript.add(timeNow() + " " + message);
+						String msg = "";
+						msg = message;
+						dos.writeUTF(msg);
+					} catch(Exception e7) {
+						
+					}
             	}
             	System.exit(0);
 			}
@@ -256,10 +278,17 @@ public class ClientGUI extends JFrame {
 		addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
             	if(!input_name.getText().equals("") && connectedUsers.indexOf(input_name.getText()) != -1){
-            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
-    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
-    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-    				transcript.add(timeNow() + " " + message);
+            		try {
+	            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+	    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
+	    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+	    				transcript.add(timeNow() + " " + message);
+	    				String msg = "";
+						msg = message;
+						dos.writeUTF(msg);
+            		} catch(Exception e6) {
+            			
+            		}
             	}
             	System.exit(0);
             }
@@ -268,17 +297,24 @@ public class ClientGUI extends JFrame {
 		btn_logIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!input_name.getText().equals("") && !input_ip.getText().equals("")){
-					text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
-					text_ip.setText(input_ip.getText());
-					
-					text_users.setText("Connected Users:\r\n\r\n"); 
-					connectedUsers.add(input_name.getText());
-					for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
-					
-					message = "[BOT] " + input_name.getText() + " has joined the conversation.";
-					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-					transcript.add(timeNow() + " " + message);
-					switchPanels(actual);	
+					try {
+						text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
+						text_ip.setText(input_ip.getText());
+						
+						text_users.setText("Connected Users:\r\n\r\n"); 
+						connectedUsers.add(input_name.getText());
+						for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
+						
+						message = "[BOT] " + input_name.getText() + " has joined the conversation.";
+						text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+						transcript.add(timeNow() + " " + message);
+						String msg = "";
+						msg = message;
+						dos.writeUTF(msg);
+						switchPanels(actual);	
+					} catch(Exception e5) {
+						
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>All fields are required! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
@@ -287,13 +323,21 @@ public class ClientGUI extends JFrame {
 		
 		btn_logOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				switchPanels(pre);
-				connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
-				
-				message = "[BOT] " + input_name.getText() + " has left the conversation.";
-				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-				transcript.add(timeNow() + " " + message);
-				JOptionPane.showMessageDialog(null, "<html><center>You have succesfully logged out.</html>");
+				try {
+					switchPanels(pre);
+					connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+					
+					message = "[BOT] " + input_name.getText() + " has left the conversation.";
+					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+					transcript.add(timeNow() + " " + message);
+					String msg = "";
+					msg = message;
+					dos.writeUTF(msg);
+					JOptionPane.showMessageDialog(null, "<html><center>You have succesfully logged out.</html>");
+				}
+				catch(Exception e4) {
+					
+				}
 			}
 		});
 		
@@ -336,8 +380,16 @@ public class ClientGUI extends JFrame {
 					File[] files = openFile.getSelectedFiles();
 					JOptionPane.showMessageDialog(null, "<html><center>File succesfully sent.</html>");
 					for (File fName:files) {
+						try {
 						message = "[" + input_name.getText() + "] " + "sent " + fName + ".";
 						transcript.add(timeNow() + " " + message);
+						text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+						String msg = "";
+						msg = message;
+						dos.writeUTF(msg);
+						} catch(Exception e3) {
+							
+						}
 					}
 			    }
 			}
@@ -346,14 +398,30 @@ public class ClientGUI extends JFrame {
 		btn_send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!input_message.getText().equals("")){
-					message = "[" + input_name.getText() + "] " + input_message.getText();
-					transcript.add(timeNow() + " " + message);
-					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-					input_message.setText("");
+					try {
+						message = "[" + input_name.getText() + "] " + input_message.getText();
+						transcript.add(timeNow() + " " + message);
+						text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+						String msg = "";
+						msg = message;
+						dos.writeUTF(msg);
+						input_message.setText("");
+						
+					} catch(Exception e2) {
+						
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>Message field is empty! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 	}
+	
+	private static JTextArea text_messages;
+	private JPanel contentPane;
+	private JTextField input_name;
+	private JTextField input_ip;
+	private JLayeredPane sessions;
+	private JPanel pre;
+	private JPanel actual;
 }
