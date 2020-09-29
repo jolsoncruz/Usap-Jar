@@ -237,7 +237,7 @@ public class ServerGUI extends JFrame {
 		
 		mnitem_quit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!input_port.getText().equals("") && logSheet.size()>0){
+				if(!text_port.getText().equals("") && logSheet.size()!=0){
 					switchPanels(post);
 					
 					message = "[BOT] Admin has closed the room for port " + input_port.getText() + ".";
@@ -250,7 +250,7 @@ public class ServerGUI extends JFrame {
 		
 		addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
-            	if(!input_port.getText().equals("") && logSheet.size()>0){
+            	if(!text_port.getText().equals("") && logSheet.size()>0){
             		switchPanels(post);
 					
 					message = "[BOT] Admin has closed the room for port " + input_port.getText() + ".";
