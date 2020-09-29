@@ -9,18 +9,21 @@
 
 2. Open terminal, compile java files
 
-> javac ServerGUI.java
-> javac ClientGUI.java
+ > javac ServerGUI.java
+
+ > javac ClientGUI.java
 
 3. Run java files
 
-> java ServerGUI
-> java ClientGUI
+ > java ServerGUI
+
+ > java ClientGUI
 
 4. Start program
 
-> java start.ServerGUI
-> java start.ClientGUI
+ > java start.ServerGUI
+
+ > java start.ClientGUI
 
 
 ## Authors
