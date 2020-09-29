@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -36,17 +37,20 @@ import javax.swing.JTextPane;
 import java.awt.TextField;
 import javax.swing.JTextField;
 
-public class USAP extends JFrame {
+import java.sql.Timestamp;
+
+public class ClientGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField input_name;
-	private JTextField input_port;
+	private JTextField input_ip;
 	private JLayeredPane sessions;
 	private JPanel pre;
 	private JPanel actual;
 	
 	List<String> connectedUsers = new ArrayList<String>();
-	String sb = "TEST CONTENT";
+	List<String> transcript = new ArrayList<String>();
+	String message = new String();
 	
 	/**
 	 * Launch the application.
@@ -55,7 +59,7 @@ public class USAP extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					USAP frame = new USAP();
+					ClientGUI frame = new ClientGUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -70,13 +74,19 @@ public class USAP extends JFrame {
 		sessions.repaint();
 		sessions.revalidate();
 	}
+	
+	public Timestamp timeNow() {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		return timestamp;
+	}
 
 	/**
 	 * Create the frame.
 	 */
-	public USAP() {
-		setTitle("De La Salle Usap (S13 Cruz & Santos)");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ClientGUI() {
+		
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setTitle("De La Salle Usap (CLIENT)");
 		setBounds(100, 100, 600, 600);
 		setResizable(false);
 		
@@ -86,8 +96,8 @@ public class USAP extends JFrame {
 		JMenu mn_file = new JMenu("File");
 		mnBar.add(mn_file);
 		
-		JMenuItem mnitem_end = new JMenuItem("End Session");
-		mn_file.add(mnitem_end);
+		JMenuItem mnitem_quit = new JMenuItem("Quit App");
+		mn_file.add(mnitem_quit);
 		
 		JMenu mn_help = new JMenu("Help");
 		mnBar.add(mn_help);
@@ -116,7 +126,7 @@ public class USAP extends JFrame {
 		JLabel img_welcome = new JLabel("");
 		img_welcome.setBounds(39, 248, 500, 100);
 		pre.add(img_welcome);
-		Image welcome = new ImageIcon(this.getClass().getResource("/welcome.png")).getImage();
+		Image welcome = new ImageIcon(this.getClass().getResource("/join.png")).getImage();
 		img_welcome.setIcon(new ImageIcon(welcome));
 		
 		input_name = new JTextField();
@@ -134,20 +144,20 @@ public class USAP extends JFrame {
 		Image name = new ImageIcon(this.getClass().getResource("/name.png")).getImage();
 		img_name.setIcon(new ImageIcon(name));
 		
-		input_port = new JTextField();
-		input_port.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 12));
-		input_port.setForeground(new Color(255, 255, 255));
-		input_port.setOpaque(false);
-		input_port.setColumns(10);
-		input_port.setBounds(283, 410, 139, 20);
-		input_port.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		pre.add(input_port);
+		input_ip = new JTextField();
+		input_ip.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 12));
+		input_ip.setForeground(new Color(255, 255, 255));
+		input_ip.setOpaque(false);
+		input_ip.setColumns(10);
+		input_ip.setBounds(283, 410, 139, 20);
+		input_ip.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		pre.add(input_ip);
 		
-		JLabel img_port = new JLabel("img_port");
-		img_port.setBounds(139, 399, 300, 40);
-		pre.add(img_port);
-		Image port = new ImageIcon(this.getClass().getResource("/port.png")).getImage();
-		img_port.setIcon(new ImageIcon(port));
+		JLabel img_ip = new JLabel("img_port");
+		img_ip.setBounds(139, 399, 300, 40);
+		pre.add(img_ip);
+		Image port = new ImageIcon(this.getClass().getResource("/IP.png")).getImage();
+		img_ip.setIcon(new ImageIcon(port));
 		
 		JButton btn_logIn = new JButton("Log In");
 		btn_logIn.setBounds(149, 460, 290, 48);
@@ -173,10 +183,10 @@ public class USAP extends JFrame {
 		div_address.setBounds(281, 103, 142, 21);
 		actual.add(div_address);
 		
-		JLabel text_port = new JLabel(input_port.getText());
-		text_port.setForeground(Color.WHITE);
-		text_port.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 11));
-		div_address.add(text_port);
+		JLabel text_ip = new JLabel(input_ip.getText());
+		text_ip.setForeground(Color.WHITE);
+		text_ip.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 11));
+		div_address.add(text_ip);
 		
 		JButton btn_logOut = new JButton("Log Out");
 		btn_logOut.setBounds(445, 103, 113, 21);
@@ -190,8 +200,9 @@ public class USAP extends JFrame {
 		text_messages.setEditable(false);
 		text_messages.setLineWrap(true);
 		text_messages.setWrapStyleWord(true);
-		text_messages.setText("[BOT] Welcome, Lasallians! This is the beginning of your conversation at port: ! Please observe proper decorum at all times when communicating via DLSU USAP.");
+		text_messages.setText("[BOT] Welcome, Lasallians! This is the beginning of your conversation! Please observe proper decorum at all times when communicating via DLSU USAP.");
 		div_messages.setViewportView(text_messages);
+		transcript.add(timeNow() + " " + text_messages.getText());
 		
 		JScrollPane div_users = new JScrollPane();
 		div_users.setBounds(445, 135, 113, 219);
@@ -203,9 +214,9 @@ public class USAP extends JFrame {
 		text_users.setText("Connected Users:\r\n\r\n");
 		div_users.setViewportView(text_users);
 		
-		JButton btn_log = new JButton("Download Log");
-		btn_log.setBounds(444, 365, 113, 37);
-		actual.add(btn_log);
+		JButton btn_transcript = new JButton("Save Chat");
+		btn_transcript.setBounds(444, 365, 113, 37);
+		actual.add(btn_transcript);
 		
 		JSeparator hb1 = new JSeparator();
 		hb1.setBounds(33, 416, 524, 15);
@@ -230,15 +241,43 @@ public class USAP extends JFrame {
 			}
 		});
 		
+		mnitem_quit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!input_name.getText().equals("") && connectedUsers.indexOf(input_name.getText()) != -1){
+            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
+    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+    				transcript.add(timeNow() + " " + message);
+            	}
+            	System.exit(0);
+			}
+		});
+		
+		addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+            	if(!input_name.getText().equals("") && connectedUsers.indexOf(input_name.getText()) != -1){
+            		connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
+    				message = "[BOT] " + input_name.getText() + " has left the conversation.";
+    				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+    				transcript.add(timeNow() + " " + message);
+            	}
+            	System.exit(0);
+            }
+        });
+		
 		btn_logIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!input_name.getText().equals("") && !input_port.getText().equals("")){
+				if(!input_name.getText().equals("") && !input_ip.getText().equals("")){
 					text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
-					text_port.setText(input_port.getText());
+					text_ip.setText(input_ip.getText());
+					
+					text_users.setText("Connected Users:\r\n\r\n"); 
 					connectedUsers.add(input_name.getText());
-					text_users.setText("Connected Users:\r\n\r\n");// + connectedUsers + "\r\n"); 
 					for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
-					text_messages.setText(text_messages.getText() + "\r\n\r\n[BOT] " + input_name.getText() + " has joined the conversation.");
+					
+					message = "[BOT] " + input_name.getText() + " has joined the conversation.";
+					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+					transcript.add(timeNow() + " " + message);
 					switchPanels(actual);	
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>All fields are required! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -250,27 +289,32 @@ public class USAP extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(pre);
 				connectedUsers.remove(connectedUsers.indexOf(input_name.getText()));
-				text_messages.setText(text_messages.getText() + "\r\n\r\n[BOT] " + input_name.getText() + " has left the conversation.");
+				
+				message = "[BOT] " + input_name.getText() + " has left the conversation.";
+				text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+				transcript.add(timeNow() + " " + message);
 				JOptionPane.showMessageDialog(null, "<html><center>You have succesfully logged out.</html>");
 			}
 		});
 		
-		btn_log.addActionListener(new ActionListener() {
+		btn_transcript.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser saveFile = new JFileChooser();
 				FileFilter  texts = new FileNameExtensionFilter("Text file", "txt");
+				
 				saveFile.addChoosableFileFilter(texts);
 				saveFile.setAcceptAllFileFilterUsed(false);
 				saveFile.setSelectedFile(new File(".txt"));
+				
 				int returnVal = saveFile.showSaveDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					try(FileWriter fwLog = new FileWriter(saveFile.getSelectedFile())) {
-						fwLog.write(sb.toString());
+						for (String log:transcript) fwLog.write(log + System.lineSeparator());
 						fwLog.close();
-						JOptionPane.showMessageDialog(null, "<html><center>Log file succesfully downloaded.</html>");
+						JOptionPane.showMessageDialog(null, "<html><center>Transcript succesfully downloaded.</html>");
 					} catch (Exception ex) {
 			            ex.printStackTrace();
-			            JOptionPane.showMessageDialog(null, "<html><center>Error in downloading log file! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
+			            JOptionPane.showMessageDialog(null, "<html><center>Error in downloading transcript! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
 			        }
 			    }
 			}
@@ -279,27 +323,37 @@ public class USAP extends JFrame {
 		btn_upload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser openFile = new JFileChooser();
-				FileFilter  images = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
-				FileFilter  texts = new FileNameExtensionFilter("Text file", "txt");
+				FileFilter images = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
+				FileFilter texts = new FileNameExtensionFilter("Text file", "txt");
+				
 				openFile.addChoosableFileFilter(images);
 				openFile.addChoosableFileFilter(texts);
 				openFile.setMultiSelectionEnabled(true);
 				openFile.setAcceptAllFileFilterUsed(false);
-				openFile.showOpenDialog(null);
-				File[] files = openFile.getSelectedFiles();
+				
+				int returnVal = openFile.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File[] files = openFile.getSelectedFiles();
+					JOptionPane.showMessageDialog(null, "<html><center>File succesfully sent.</html>");
+					for (File fName:files) {
+						message = "[" + input_name.getText() + "] " + "sent " + fName + ".";
+						transcript.add(timeNow() + " " + message);
+					}
+			    }
 			}
 		});
 		
 		btn_send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!input_message.getText().equals("")){
-					text_messages.setText(text_messages.getText() + "\r\n\r\n[" + input_name.getText() + "] " + input_message.getText() + " ");
+					message = "[" + input_name.getText() + "] " + input_message.getText();
+					transcript.add(timeNow() + " " + message);
+					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
 					input_message.setText("");
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>Message field is empty! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-	
 	}
 }
