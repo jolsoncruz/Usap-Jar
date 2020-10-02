@@ -34,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.SwingConstants;
 
 public class ServerGUI extends JFrame {
 	
@@ -66,7 +67,7 @@ public class ServerGUI extends JFrame {
 			dis = new DataInputStream(s.getInputStream());
 			dos = new DataOutputStream(s.getOutputStream());
 			
-			while(!msgin.equals("exit")){
+			while(true){
 				msgin = dis.readUTF();
 				text_log.setText(text_log.getText() + "\n\n" + msgin);
 				logSheet.add(timeNow() + " " + msgin);
@@ -126,28 +127,31 @@ public class ServerGUI extends JFrame {
 		JLabel img_box = new JLabel("Image");
 		img_box.setBounds(189, 24, 200, 200);
 		pre.add(img_box);
-		Image logo1 = new ImageIcon(this.getClass().getResource("/usap.png")).getImage();
+		Image logo1 = new ImageIcon(this.getClass().getResource("usap.png")).getImage();
 		img_box.setIcon(new ImageIcon(logo1));
 		
 		JLabel img_welcome = new JLabel("");
 		img_welcome.setBounds(39, 248, 500, 100);
 		pre.add(img_welcome);
-		Image welcome = new ImageIcon(this.getClass().getResource("/create.png")).getImage();
+		Image welcome = new ImageIcon(this.getClass().getResource("create.png")).getImage();
 		img_welcome.setIcon(new ImageIcon(welcome));
 		
 		input_port = new JTextField();
+		input_port.setHorizontalAlignment(SwingConstants.CENTER);
+		input_port.setEditable(false);
+		input_port.setText("1201");
 		input_port.setFont(new Font("Avenir LT Std 65 Medium", Font.BOLD, 12));
 		input_port.setForeground(new Color(255, 255, 255));
 		input_port.setOpaque(false);
 		input_port.setColumns(10);
-		input_port.setBounds(283, 385, 139, 20);
+		input_port.setBounds(284, 387, 139, 20);
 		input_port.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		pre.add(input_port);
 		
 		JLabel img_port = new JLabel("img_port");
 		img_port.setBounds(139, 375, 300, 40);
 		pre.add(img_port);
-		Image port = new ImageIcon(this.getClass().getResource("/port.png")).getImage();
+		Image port = new ImageIcon(this.getClass().getResource("port.png")).getImage();
 		img_port.setIcon(new ImageIcon(port));
 		
 		JButton btn_logIn = new JButton("Create Room");
@@ -161,7 +165,7 @@ public class ServerGUI extends JFrame {
 		img_logo = new JLabel("");
 		img_logo.setBounds(33, 11, 524, 76);
 		actual.add(img_logo);
-		Image logo2 = new ImageIcon(this.getClass().getResource("/banner.png")).getImage();
+		Image logo2 = new ImageIcon(this.getClass().getResource("banner.png")).getImage();
 		img_logo.setIcon(new ImageIcon(logo2));
 		
 		JLabel text_connected = new JLabel("Hello, Admin! You are listening to:");
@@ -216,13 +220,13 @@ public class ServerGUI extends JFrame {
 		JLabel img_box2 = new JLabel("Image");
 		img_box2.setBounds(189, 24, 200, 200);
 		post.add(img_box2);
-		Image logo3 = new ImageIcon(this.getClass().getResource("/usap.png")).getImage();
+		Image logo3 = new ImageIcon(this.getClass().getResource("usap.png")).getImage();
 		img_box2.setIcon(new ImageIcon(logo3));
 		
 		JLabel img_save = new JLabel("");
 		img_save.setBounds(39, 248, 500, 100);
 		post.add(img_save);
-		Image save = new ImageIcon(this.getClass().getResource("/save.png")).getImage();
+		Image save = new ImageIcon(this.getClass().getResource("save.png")).getImage();
 		img_save.setIcon(new ImageIcon(save));
 		
 		JLabel text_port2 = new JLabel("");
@@ -233,7 +237,7 @@ public class ServerGUI extends JFrame {
 		JLabel img_port2 = new JLabel("img_port");
 		img_port2.setBounds(139, 375, 300, 40);
 		post.add(img_port2);
-		Image port2 = new ImageIcon(this.getClass().getResource("/port.png")).getImage();
+		Image port2 = new ImageIcon(this.getClass().getResource("port.png")).getImage();
 		img_port2.setIcon(new ImageIcon(port2));
 		
 		JButton btn_yes = new JButton("Yes, save it!");

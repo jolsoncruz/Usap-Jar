@@ -74,7 +74,7 @@ public class ClientGUI extends JFrame {
 			dis = new DataInputStream(s.getInputStream());
 			dos = new DataOutputStream(s.getOutputStream());
 			
-			while(!msgin.equals("exit")){
+			while(true){
 				msgin = dis.readUTF();
 				text_messages.setText(text_messages.getText() + "\n\n" + msgin);
 			}
@@ -135,13 +135,13 @@ public class ClientGUI extends JFrame {
 		JLabel img_box = new JLabel("Image");
 		img_box.setBounds(189, 24, 200, 200);
 		pre.add(img_box);
-		Image logo1 = new ImageIcon(this.getClass().getResource("/usap.png")).getImage();
+		Image logo1 = new ImageIcon(this.getClass().getResource("usap.png")).getImage();
 		img_box.setIcon(new ImageIcon(logo1));
 		
 		JLabel img_welcome = new JLabel("");
 		img_welcome.setBounds(39, 248, 500, 100);
 		pre.add(img_welcome);
-		Image welcome = new ImageIcon(this.getClass().getResource("/join.png")).getImage();
+		Image welcome = new ImageIcon(this.getClass().getResource("join.png")).getImage();
 		img_welcome.setIcon(new ImageIcon(welcome));
 		
 		input_name = new JTextField();
@@ -156,7 +156,7 @@ public class ClientGUI extends JFrame {
 		JLabel img_name = new JLabel("img_name");
 		img_name.setBounds(139, 359, 300, 40);
 		pre.add(img_name);
-		Image name = new ImageIcon(this.getClass().getResource("/name.png")).getImage();
+		Image name = new ImageIcon(this.getClass().getResource("name.png")).getImage();
 		img_name.setIcon(new ImageIcon(name));
 		
 		input_ip = new JTextField();
@@ -171,7 +171,7 @@ public class ClientGUI extends JFrame {
 		JLabel img_ip = new JLabel("img_port");
 		img_ip.setBounds(139, 399, 300, 40);
 		pre.add(img_ip);
-		Image port = new ImageIcon(this.getClass().getResource("/IP.png")).getImage();
+		Image port = new ImageIcon(this.getClass().getResource("IP.png")).getImage();
 		img_ip.setIcon(new ImageIcon(port));
 		
 		JButton btn_logIn = new JButton("Log In");
@@ -185,7 +185,7 @@ public class ClientGUI extends JFrame {
 		JLabel img_logo = new JLabel("");
 		img_logo.setBounds(33, 11, 524, 76);
 		actual.add(img_logo);
-		Image logo2 = new ImageIcon(this.getClass().getResource("/banner.png")).getImage();
+		Image logo2 = new ImageIcon(this.getClass().getResource("banner.png")).getImage();
 		img_logo.setIcon(new ImageIcon(logo2));
 		
 		JLabel text_connected = new JLabel("Hello, Archer! You are connected to:");
@@ -298,22 +298,27 @@ public class ClientGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(!input_name.getText().equals("") && !input_ip.getText().equals("")){
 					try {
-						text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
-						text_ip.setText(input_ip.getText());
-						
-						text_users.setText("Connected Users:\r\n\r\n"); 
-						connectedUsers.add(input_name.getText());
-						for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
-						
-						message = "[BOT] " + input_name.getText() + " has joined the conversation.";
-						text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
-						transcript.add(timeNow() + " " + message);
-						String msg = "";
-						msg = message;
-						dos.writeUTF(msg);
-						switchPanels(actual);	
+						if(input_ip.getText().equals("1201")) {
+							text_connected.setText("Hello, " + input_name.getText() + "! You are connected to:");
+							text_ip.setText(input_ip.getText());
+								
+							text_users.setText("Connected Users:\r\n\r\n"); 
+							connectedUsers.add(input_name.getText());
+							for (String name:connectedUsers) text_users.setText(text_users.getText() + name + "\r\n");
+							
+							message = "[BOT] " + input_name.getText() + " has joined the conversation.";
+							text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+							transcript.add(timeNow() + " " + message);
+							String msg = "";
+							msg = message;
+							dos.writeUTF(msg);
+							switchPanels(actual);
+						} else {
+							JOptionPane.showMessageDialog(null, "<html><center>" + input_ip.getText() + " is closed. Please try another IP/PORT.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+						}
 					} catch(Exception e5) {
-						
+							
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "<html><center>All fields are required! Please try again.</html>", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -329,6 +334,7 @@ public class ClientGUI extends JFrame {
 					
 					message = "[BOT] " + input_name.getText() + " has left the conversation.";
 					text_messages.setText(text_messages.getText() + "\r\n\r\n" + message);
+					text_messages.setText("[BOT] Welcome, Lasallians! This is the beginning of your conversation! Please observe proper decorum at all times when communicating via DLSU USAP.");
 					transcript.add(timeNow() + " " + message);
 					String msg = "";
 					msg = message;
