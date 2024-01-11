@@ -1,30 +1,12 @@
 # CSNETWK DLSU USAP Chat Application 
 
 ### Description
-- This is a one-on-one chat application that can be shared between 2 clients and a server that can allow clients to send and receive messages and also upload and download files. 
+- This is a one-to-one chat application that can be shared between 2 clients and a server that can allow clients to send and receive messages and also upload and download files. 
 
 ## Setting Up
 
-1. Open ZIP and unzip file
-
-2. Open terminal, compile java files
-
- > javac ServerGUI.java
-
- > javac ClientGUI.java
-
-3. Run java files
-
- > java ServerGUI
-
- > java ClientGUI
-
-4. Start program
-
- > java start.ServerGUI
-
- > java start.ClientGUI
-
+1. Run Server.jar and open the room
+2. Run Client.jar and connect to the room
 
 ## Authors
 * Jolson Eric Cruz
