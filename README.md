@@ -12,10 +12,6 @@
 * Jolson Eric Cruz
 * Maria Joeme Santos
 
-### Aknowledgments
-
-Sir Marnel Padilla and Miss Katrina Solomon.
-
 
 
 
