@@ -1,4 +1,4 @@
-# CSNETWK DLSU USAP Chat Application 
+# DLSU USAP - A Socket-Based Java Chat Application 
 
 ### Description
 - This is a one-to-one chat application that can be shared between 2 clients and a server that can allow clients to send and receive messages and also upload and download files. 
