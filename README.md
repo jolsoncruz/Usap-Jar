@@ -1,3 +1,5 @@
+<img src="/img/banner.png" alt="Vanier College" width="200"/>
+
 # DLS USAP - A Socket-Based Java Chat Application 
 
 ### Description
