@@ -1,4 +1,4 @@
-<img src="/img/banner.png" alt="Vanier College" width="200"/>
+<img src="/img/banner.png" alt="De La Salle Usap"/>
 
 # DLS USAP - A Socket-Based Java Chat Application 
 
